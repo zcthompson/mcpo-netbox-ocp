@@ -1,0 +1,76 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: netbox-mcp-server
+  namespace: <enter_your_namespace>
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netbox-mcp-server
+  template:
+    metadata:
+      labels:
+        app: netbox-mcp-server
+    spec:
+      restartPolicy: Always
+      serviceAccountName: default
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
+      securityContext: {}
+      containers:
+        - resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          name: netbox-mcp-server
+          env:
+            - name: NETBOX_URL
+              value: 'https://yournetboxinstance.example.com'    ### Update this to the 
+            - name: NETBOX_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: nb-token
+                  key: secret
+            - name: REQUESTS_CA_BUNDLE
+              value: /app/certs/ca-certificates.crt
+            - name: SSL_CERT_FILE
+              value: /app/certs/ca-certificates.crt
+            - name: CURL_CA_BUNDLE
+              value: /app/certs/ca-certificates.crt
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+            - containerPort: 8080
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: ca-bundle-self-signed-service
+              readOnly: true
+              mountPath: /app/certs/
+          terminationMessagePolicy: File
+          image: 'quay.io/yourpath/image:latest'     ### Update this to the image path required
+      serviceAccount: default
+      volumes:
+        - name: ca-bundle-self-signed-service
+          configMap:
+            name: config-trusted-cabundle
+            items:
+              - key: ca-bundle.crt
+                path: ca-certificates.crt
+            defaultMode: 420
+      dnsPolicy: ClusterFirst
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
