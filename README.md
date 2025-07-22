@@ -35,6 +35,30 @@ After this completes you should see writing manifest, next push the image to qua
 podman push <image_manifest_id_from_creation> quay.io/your_repository/image_name:latest
 ```
 
+
+### 🔐 Securing the API Endpoint for the Tool Server
+
+To enable API key authentication for your NetBox MCP Tool Server:
+
+1. 📖 **Review the MCPO README**  
+   Refer to the official MCPO documentation:  
+   [https://github.com/open-webui/mcpo](https://github.com/open-webui/mcpo)
+
+2. 🛠️ **Modify the Containerfile**  
+   Edit the `Containerfile` to include an API key in the command.  
+   Update the `CMD` line to:
+
+   ```bash
+   --api-key "top-secret" -- uv run --directory /app/nb-mcp-server run server.py
+   ```
+### 🔗 Complete Integration with OpenWebUI
+After modifying the container, refer to the OpenWebUI integration documentation
+to finish configuration and securely connect your MCP server.
+
+### OpenShift deployment examples
+
+Look in the examples folder for a simple deployment of a single MCPO based OpenAPI compatible tools server for OpenWebUI integration - TBD
+
 ## 📚 References
 
 ### 🔗 OpenWeb UI Integration Docs
