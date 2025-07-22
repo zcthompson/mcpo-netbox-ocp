@@ -30,7 +30,7 @@ spec:
           name: netbox-mcp-server
           env:
             - name: NETBOX_URL
-              value: 'https://yournetboxinstance.example.com'    ### Update this to the 
+              value: 'https://yournetboxinstance.example.com'    ### Update this to the target netbox url
             - name: NETBOX_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -61,9 +61,9 @@ spec:
       volumes:
         - name: ca-bundle-self-signed-service
           configMap:
-            name: config-trusted-cabundle
+            name: <-enter_your_intended_openshift_ca_configmap_name_here->
             items:
-              - key: ca-bundle.crt
+              - key: <-enter_your_intended_key_name_in_the_configmap_chosen_above_here->
                 path: ca-certificates.crt
             defaultMode: 420
       dnsPolicy: ClusterFirst
