@@ -1,0 +1,8 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: api-token
+  namespace: <-enter_your_intended_namespace->
+data:
+  secret: <----place_your_base64_encoded_mcpo_api_token_here--->
+type: Opaque
